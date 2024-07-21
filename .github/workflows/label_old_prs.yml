@@ -1,0 +1,56 @@
+name: Label Old PRs
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # 毎日 UTC 1:00 (例: 日本時間 10:00) に実行
+  workflow_dispatch: # 手動実行のオプション
+
+jobs:
+  label-old-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # 最新のLTSバージョンを使用
+
+      - name: Install dependencies
+        run: npm install @octokit/rest moment-business-days
+
+      - name: Run labeling script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node -e "
+          const { Octokit } = require('@octokit/rest');
+          const moment = require('moment-business-days');
+          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+          const LABEL_NAME = 'review required';
+          async function labelOldPRs() {
+            const { data: pullRequests } = await octokit.pulls.list({
+              owner: '${{ github.repository_owner }}',
+              repo: '${{ github.event.repository.name }}',
+              state: 'open',
+              sort: 'created',
+              direction: 'asc'
+            });
+            for (const pr of pullRequests) {
+              const createdAt = moment(pr.created_at);
+              const today = moment();
+              const businessDays = today.businessDiff(createdAt);
+              if (businessDays >= 3 || !pr.labels.some(label => label.name === LABEL_NAME)) {
+                await octokit.issues.addLabels({
+                  owner: '${{ github.repository_owner }}',
+                  repo: '${{ github.event.repository.name }}',
+                  issue_number: pr.number,
+                  labels: [LABEL_NAME]
+                });
+                console.log(`Added ${LABEL_NAME} label to PR #${pr.number}`);
+              }
+            }
+          }
+          labelOldPRs().catch(console.error);
+          "
