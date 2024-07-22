@@ -5,6 +5,10 @@ on:
     - cron: '0 15 * * *'
   workflow_dispatch: # 手動実行のオプション
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   label-old-prs:
     runs-on: ubuntu-latest
@@ -25,5 +29,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
-        run: node scripts/label_prs.mjs
+        run: node scripts/labelOldPRs.mjs
 
