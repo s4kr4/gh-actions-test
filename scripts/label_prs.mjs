@@ -1,5 +1,5 @@
-const { Octokit } import 'octokit';
-const moment import 'moment-business-days';
+import { Octokit } from 'octokit';
+import moment from 'moment-business-days';
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const LABEL_NAME = 'review required';
