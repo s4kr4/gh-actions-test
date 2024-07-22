@@ -2,7 +2,7 @@ name: Label Old PRs
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '18 3 * * *'
   workflow_dispatch: # 手動実行のオプション
 
 jobs:
@@ -25,8 +25,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node -e "
-          import { Octokit } from '@octokit/rest';
-          import moment from 'moment-business-days';
+          const { Octokit } = import('@octokit/rest');
+          const moment = import('moment-business-days');
 
           const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
           const LABEL_NAME = 'review required';
