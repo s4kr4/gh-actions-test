@@ -5,7 +5,7 @@ const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const LABEL_NAME = 'review required';
 
 async function labelOldPRs() {
-  const { data: pullRequests } = await octokit.pulls.list({
+  const { data: pullRequests } = await octokit.rest.pulls.list({
     owner: process.env.GITHUB_REPOSITORY_OWNER,
     repo: process.env.GITHUB_REPOSITORY_NAME,
     state: 'open',
@@ -19,7 +19,7 @@ async function labelOldPRs() {
     const businessDays = today.businessDiff(createdAt);
 
     if (businessDays >= 3 || !pr.labels.some(label => label.name === LABEL_NAME)) {
-      await octokit.issues.addLabels({
+      await octokit.rest.issues.addLabels({
         owner: process.env.GITHUB_REPOSITORY_OWNER,
         repo: process.env.GITHUB_REPOSITORY_NAME,
         issue_number: pr.number,
