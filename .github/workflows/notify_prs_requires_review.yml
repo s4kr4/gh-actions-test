@@ -1,0 +1,33 @@
+name: Notify PRs requires review
+
+on:
+  schedule:
+    - cron: '55 11 * * 1-5'
+  workflow_dispatch: # 手動実行のオプション
+
+permissions:
+  contents: read
+
+jobs:
+  notify-prs-requires-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install octokit
+
+      - name: Run labeling script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          NOTIFICATION=$(node scripts/notifiyPRsRequiresReview.mjs)
+          echo "notification=${NOTIFICATION}" >> $GITHUB_OUTPUT
+      - name: echo notification
+        run: |
+          echo ${{ steps.setup-vars.outputs.notification }}
