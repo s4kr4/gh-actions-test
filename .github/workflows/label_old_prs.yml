@@ -1,8 +1,8 @@
 name: Label Old PRs
 
 on:
-  schedule:
-    - cron: '0 15 * * *'
+  # schedule:
+  #   - cron: '0 15 * * *'
   workflow_dispatch: # 手動実行のオプション
 
 permissions:
