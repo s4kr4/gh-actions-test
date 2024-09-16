@@ -2,6 +2,7 @@ import { Octokit } from 'octokit';
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const labelsToNotify = ['review required', 'Priority: High'];
+const PR_BASE_URL = 'https://github.com/s4kr4/gh-actions-test/pull/'
 
 async function notifyPRsToSlack() {
   const { data: pullRequests } = await octokit.rest.pulls.list({
@@ -20,7 +21,7 @@ async function notifyPRsToSlack() {
   }
 
   if (prsToNotify.length > 0) {
-    console.log(`Check PRs ${prsToNotify.map(pr => `#${pr.number}`).join(', ')}`);
+    console.log(`${prsToNotify.map(pr => `[#${pr.number}](${PR_BASE_URL}${pr.number})`).join(', ')}`);
   }
 }
 notifyPRsToSlack().catch(console.error);
