@@ -26,7 +26,7 @@ jobs:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: |
-          NOTIFICATION=$(node scripts/notifiyPRsRequiresReview.mjs)
+          NOTIFICATION=$(node scripts/notifyPRsToSlack.mjs)
           echo "notification=${NOTIFICATION}" >> $GITHUB_OUTPUT
       - name: echo notification
         run: |
