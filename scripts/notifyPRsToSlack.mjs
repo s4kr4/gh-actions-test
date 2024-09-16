@@ -2,7 +2,7 @@ import { Octokit } from 'octokit';
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const labelsToNotify = ['review required', 'Priority: High'];
-const PR_BASE_URL = 'https://github.com/s4kr4/gh-actions-test/pull/'
+const PR_BASE_URL = `https://github.com/${process.env.GITHUB_REPOSITORY_OWNER}/${process.env.GITHUB_REPOSITORY_NAME}/pull/`
 
 async function notifyPRsToSlack() {
   const { data: pullRequests } = await octokit.rest.pulls.list({

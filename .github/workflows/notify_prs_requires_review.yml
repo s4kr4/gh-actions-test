@@ -20,11 +20,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install octokit
 
-      - name: Run labeling script
+      - name: List PRs
         id: list-prs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,6 +34,6 @@ jobs:
         run: |
           NOTIFICATION=$(node scripts/notifyPRsToSlack.mjs)
           echo "notification=${NOTIFICATION}" >> $GITHUB_OUTPUT
+      
       - name: echo notification
-        run: |
-          echo ${{ steps.list-prs.outputs.notification }}
+        run: echo "${{ steps.list-prs.outputs.notification }}"
